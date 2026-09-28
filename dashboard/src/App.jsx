@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 
-const WS_URL = 'ws://127.0.0.1:8080'
-const HTTP_URL = 'http://127.0.0.1:9999/status'
+const host = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '127.0.0.1'
+const WS_URL = `ws://${host}:8080`
+const HTTP_URL = `http://${host}:9999/status`
 
 // Màu xe 3D tương ứng cho từng ô đỗ
 const SLOT_CAR_COLORS = {
