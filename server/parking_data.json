@@ -1,0 +1,11 @@
+{
+  "total_in": 0,
+  "total_out": 0,
+  "total_revenue": 0,
+  "slots": [
+    {"id":1,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0},
+    {"id":2,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0},
+    {"id":3,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0}
+  ],
+  "log": []
+}

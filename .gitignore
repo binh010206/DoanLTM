@@ -1,0 +1,18 @@
+# Node dependencies
+node_modules/
+package-lock.json
+
+# Build output
+dashboard/dist/
+dist/
+
+# Binaries & Executables (nếu muốn đẩy cả file exe lên để thầy chạy ngay thì bỏ comment)
+# *.exe
+# *.o
+# *.obj
+
+# VSCode & OS files
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
