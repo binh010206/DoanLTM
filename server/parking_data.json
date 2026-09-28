@@ -1,11 +1,22 @@
 {
-  "total_in": 0,
-  "total_out": 0,
-  "total_revenue": 0,
+  "total_in": 4,
+  "total_out": 4,
+  "total_revenue": 190000,
   "slots": [
     {"id":1,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0},
     {"id":2,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0},
     {"id":3,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0}
   ],
-  "log": []
+  "log": [
+    {"time":"23:47:31","event":"Xe RA - O 3 - RFID: 11223344 - 90.000 VND","type":"exit","client_ip":"127.0.0.1:62666","fee":90000,"duration_sec":1032},
+    {"time":"23:47:26","event":"Xe RA - O 2 - RFID: DEADBEEF - 90.000 VND","type":"exit","client_ip":"127.0.0.1:62666","fee":90000,"duration_sec":1031},
+    {"time":"23:47:18","event":"Xe RA - O 1 - RFID: A1B2C3D4 - 5.000 VND","type":"exit","client_ip":"127.0.0.1:62666","fee":5000,"duration_sec":51},
+    {"time":"23:47:10","event":"TU CHOI - THE DA CO TRONG BAI - RFID: A1B2C3D4","type":"reject","client_ip":"127.0.0.1:62666","fee":0,"duration_sec":0},
+    {"time":"23:46:27","event":"Xe VAO - O 1 - RFID: A1B2C3D4","type":"entry","client_ip":"127.0.0.1:62666","fee":0,"duration_sec":0},
+    {"time":"23:30:45","event":"Xe RA - O 1 - RFID: A1B2C3D4 - 5.000 VND","type":"exit","client_ip":"127.0.0.1:55950","fee":5000,"duration_sec":38},
+    {"time":"23:30:25","event":"TU CHOI - BAI DAY - RFID: FF00AB12","type":"reject","client_ip":"127.0.0.1:55950","fee":0,"duration_sec":0},
+    {"time":"23:30:19","event":"Xe VAO - O 3 - RFID: 11223344","type":"entry","client_ip":"127.0.0.1:55950","fee":0,"duration_sec":0},
+    {"time":"23:30:15","event":"Xe VAO - O 2 - RFID: DEADBEEF","type":"entry","client_ip":"127.0.0.1:55950","fee":0,"duration_sec":0},
+    {"time":"23:30:07","event":"Xe VAO - O 1 - RFID: A1B2C3D4","type":"entry","client_ip":"127.0.0.1:55950","fee":0,"duration_sec":0}
+  ]
 }

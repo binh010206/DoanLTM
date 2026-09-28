@@ -1,10 +1,9 @@
-# 🅿️ Hệ Thống Bãi Đỗ Xe Thông Minh (Smart Parking System)
-**Học phần: Lập Trình Mạng (Client - Server Phân Tán qua giao thức TCP)**  
-**Trường Đại học Công nghệ Thông tin & Truyền thông Việt - Hàn (VKU Đà Nẵng)**
+#  Hệ Thống Bãi Đỗ Xe Thông Minh (Smart Parking System)
+Học phần: Lập Trình Mạng (Client - Server Phân Tán qua giao thức TCP)
+Trường Đại học Công nghệ Thông tin & Truyền thông Việt - Hàn (VKU Đà Nẵng)
 
----
 
-## 📁 Cấu Trúc Đồ Án
+#  Cấu Trúc Đồ Án
 ```
 DoanLTM/
 ├── server/
@@ -20,5 +19,4 @@ DoanLTM/
     └── src/App.css
 ```
 
----
 

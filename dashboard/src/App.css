@@ -1,7 +1,3 @@
-/* ==========================================================================
-   HIGH-TECH 3D ISOMETRIC PARKING SYSTEM - CYBERPUNK THEME
-   BÃI ĐỖ XE THÔNG MINH - VKU ĐÀ NẴNG
-   ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -40,9 +36,9 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ==========================================================================
+/*  
    CYBER 3D PERSPECTIVE BACKGROUND
-   ========================================================================== */
+     */
 .cyber-app-wrapper {
   position: relative;
   min-height: 100vh;
@@ -106,9 +102,9 @@ body {
 .text-muted { color: var(--text-muted); }
 .text-dark { color: var(--text-dark); }
 
-/* ==========================================================================
+/*  
    HEADER
-   ========================================================================== */
+     */
 .cyber-header {
   display: flex;
   justify-content: space-between;
@@ -233,9 +229,9 @@ body {
   font-family: var(--font-mono);
 }
 
-/* ==========================================================================
+/*  
    METRICS ROW (6 BOXES)
-   ========================================================================== */
+     */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -312,9 +308,9 @@ body {
   background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, rgba(13, 18, 30, 0.75) 100%);
 }
 
-/* ==========================================================================
+/*  
    3D ISOMETRIC PARKING STAGE
-   ========================================================================== */
+     */
 .parking-stage-section {
   background: var(--panel-bg);
   backdrop-filter: blur(20px);
@@ -443,9 +439,9 @@ body {
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-/* ==========================================================================
+/*  
    ISOMETRIC GROUND PLATE (MẶT SÀN 3D)
-   ========================================================================== */
+     */
 .isometric-ground-plate {
   position: relative;
   min-height: 180px;
@@ -474,9 +470,9 @@ body {
   pointer-events: none;
 }
 
-/* ==========================================================================
+/*  
    CAR 3D VISUAL & HEADLIGHT BEAMS
-   ========================================================================== */
+     */
 .car-parking-scene {
   display: flex;
   flex-direction: column;
@@ -558,9 +554,9 @@ body {
   font-weight: 600;
 }
 
-/* ==========================================================================
+/*  
    HOLOGRAPHIC EMPTY BAY BEACON
-   ========================================================================== */
+     */
 .empty-slot-scene {
   text-align: center;
   position: relative;
@@ -616,9 +612,9 @@ body {
   color: var(--text-dark);
 }
 
-/* ==========================================================================
+/*  
    BAY INFO PANEL (METADATA)
-   ========================================================================== */
+     */
 .bay-info-panel {
   display: flex;
   flex-direction: column;
@@ -684,9 +680,9 @@ body {
   font-style: italic;
 }
 
-/* ==========================================================================
+/*  
    LOG PANEL SECTION (TRANSACTION LOG)
-   ========================================================================== */
+     */
 .log-panel-section {
   background: var(--panel-bg);
   backdrop-filter: blur(20px);
@@ -869,9 +865,9 @@ body {
   margin-bottom: 8px;
 }
 
-/* ==========================================================================
+/*  
    FOOTER
-   ========================================================================== */
+     */
 .cyber-footer {
   display: flex;
   justify-content: space-between;

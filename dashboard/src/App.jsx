@@ -176,7 +176,7 @@ export default function App() {
               <div className="hologram-ring"></div>
             </div>
             <div>
-              <div className="sub-dept">VKU ĐÀ NẴNG · BÁO CÁO LẬP TRÌNH MẠNG</div>
+              <div className="sub-dept">VKU ĐÀ NẴNG </div>
               <h1 className="cyber-title">HỆ THỐNG QUẢN LÝ BÃI ĐỖ XE THÔNG MINH</h1>
             </div>
           </div>
@@ -185,9 +185,9 @@ export default function App() {
             <div className={`cyber-status-tag ${connMode}`}>
               <span className="blinking-dot"></span>
               <span className="status-text">
-                {connMode === 'websocket' && 'WEBSOCKET: LIVE (8080)'}
-                {connMode === 'polling' && 'HTTP POLLING (9999)'}
-                {connMode === 'disconnected' && 'OFFLINE (CHỜ SERVER)'}
+                {connMode === 'websocket' && 'WEBSOCKET: LIVE'}
+                {connMode === 'polling' && 'HTTP POLLING '}
+                {connMode === 'disconnected' && 'OFFLINE '}
               </span>
             </div>
             <div className="clock-tag">SYNC: {lastUpdate || '--:--:--'}</div>
@@ -426,11 +426,7 @@ export default function App() {
 
         {/* Footer */}
         <footer className="cyber-footer">
-          <div>🅿️ ĐỒ ÁN LẬP TRÌNH MẠNG · BÃI ĐỖ XE THÔNG MINH · VKU ĐÀ NẴNG</div>
-          <div className="footer-links">
-            <span>💾 Dữ liệu: <code>server/parking_data.json</code></span>
-            <span>📡 TCP: 8888 · HTTP: 9999 · WS: 8080</span>
-          </div>
+          <div>🅿️  BÃI ĐỖ XE THÔNG MINH · VKU ĐÀ NẴNG</div>  
         </footer>
       </div>
     </div>

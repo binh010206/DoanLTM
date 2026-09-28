@@ -6,7 +6,7 @@ package-lock.json
 dashboard/dist/
 dist/
 
-# Binaries & Executables (nếu muốn đẩy cả file exe lên để thầy chạy ngay thì bỏ comment)
+# Binaries & Executables 
 # *.exe
 # *.o
 # *.obj

@@ -1,7 +1,5 @@
 @echo off
-echo =============================================
-echo   Build Server - Bai Do Xe Thong Minh
-echo =============================================
+echo     Bai Do Xe Thong Minh
 cl /EHsc /W3 /Fe:server.exe server.cpp Ws2_32.lib
 if %ERRORLEVEL% == 0 (
     echo.

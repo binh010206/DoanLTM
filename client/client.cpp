@@ -1,8 +1,3 @@
-// ============================================================
-//  MOCK RFID CLIENT - Tram Quet The Gui Xe Vang Lai
-//  Do an Lap trinh mang - Dai hoc VKU Da Nang
-//  Ket noi TCP toi Server: 127.0.0.1:8888
-// ============================================================
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -29,10 +24,9 @@ const int CARD_COUNT = 5;
 
 void print_header() {
     std::cout << "\n";
-    std::cout << "  ======================================================\n";
     std::cout << "   TRAM QUET THE RFID - BAI DO XE THONG MINH (VKU)      \n";
     std::cout << "   Giao thuc: TCP Socket | Server: 127.0.0.1:8888       \n";
-    std::cout << "  ======================================================\n";
+    std::cout << "   -----------------------------------------------------\n";
 }
 
 void print_cards() {
@@ -150,11 +144,11 @@ int main() {
     std::cout << "   [OK] Da ket noi toi Server TCP: 127.0.0.1:8888\n";
 
     while (true) {
-        std::cout << "\n  ================= MENU DIEU KHIEN =================\n";
+        std::cout << "\n  - MENU DIEU KHIEN -\n";
         std::cout << "  [1] Quet the XE VAO (ENTRY)\n";
         std::cout << "  [2] Quet the XE RA  (EXIT & Tinh tien)\n";
         std::cout << "  [0] Thoat chuong trinh\n";
-        std::cout << "  ===================================================\n";
+        std::cout << "  -----------------------------------------------------\n";
         std::cout << "  Nhap lua chon cua ban (0, 1, 2): ";
 
         int choice;

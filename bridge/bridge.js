@@ -1,8 +1,4 @@
-// ============================================================
-//  WebSocket Bridge - Cau noi C++ Server <-> React Dashboard
-//  Poll HTTP /status tu C++ Server (port 9999)
-//  Broadcast qua WebSocket (port 8080) toi Dashboard
-// ============================================================
+
 const WebSocket = require('ws');
 const http = require('http');
 

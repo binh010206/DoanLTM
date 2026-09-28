@@ -1,9 +1,3 @@
-// ============================================================
-//  SMART PARKING SERVER v3.1 - Do an Lap trinh mang VKU Da Nang
-//  TCP Port 8888  : Nhan lenh tu Client RFID (Winsock2 Multi-thread)
-//  HTTP Port 9999 : REST API cho Dashboard (/status, /stats)
-//  Co che: Mutex bao ve tai nguyen, Tu dong luu parking_data.json
-// ============================================================
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -21,9 +15,7 @@
 #include <iomanip>
 #pragma comment(lib, "Ws2_32.lib")
 
-// ============================================================
 //  CAU TRUC DU LIEU
-// ============================================================
 struct Slot {
     int         id;
     bool        occupied;
@@ -47,9 +39,7 @@ struct ClientInfo {
     int         port;
 };
 
-// ============================================================
 //  TRANG THAI TOAN CUC
-// ============================================================
 std::mutex            g_mutex;
 Slot                  g_slots[3] = {
     {1, false, "", 0, "", 0},
@@ -66,9 +56,8 @@ int     g_active_clients = 0;
 const long RATE_PER_MINUTE = 5000;
 const std::string DATA_FILE = "parking_data.json";
 
-// ============================================================
 //  TIEN ICH THOI GIAN & DINH DANG
-// ============================================================
+
 std::string get_time() {
     time_t now = time(nullptr);
     struct tm t;
@@ -119,9 +108,8 @@ std::string format_vnd(long amount) {
     return result + " VND";
 }
 
-// ============================================================
+
 //  LUU / TAI DU LIEU TU FILE JSON (DATA PERSISTENCE)
-// ============================================================
 std::string json_escape(const std::string& s) {
     std::string out;
     for (char c : s) {
@@ -276,9 +264,7 @@ void load_data() {
               << g_total_out << " ra | Doanh thu: " << format_vnd(g_total_revenue) << "\n";
 }
 
-// ============================================================
 //  XU LY GOI TIN TCP TU TRAM QUET THE (ENTRY / EXIT)
-// ============================================================
 std::string handle_message(const std::string& msg, const ClientInfo& ci) {
     size_t sep = msg.find('|');
     if (sep == std::string::npos) return "ERROR|BAD_FORMAT\n";
@@ -298,6 +284,8 @@ std::string handle_message(const std::string& msg, const ClientInfo& ci) {
         for (auto& s : g_slots) {
             if (s.occupied && s.rfid == rfid) {
                 std::cout << "  [!] The " << rfid << " DA TRONG BAI (O " << s.id << ")\n";
+                add_log("TU CHOI - THE DA CO TRONG BAI - RFID: " + rfid, "reject", client_addr);
+                save_data();
                 return "ERROR|ALREADY_IN|SLOT_" + std::to_string(s.id) + "\n";
             }
         }
@@ -369,15 +357,14 @@ std::string handle_message(const std::string& msg, const ClientInfo& ci) {
             }
         }
         std::cout << "  [?] The " << rfid << " KHONG TIM THAY TRONG BAI!\n";
+        add_log("TU CHOI - THE CHUA VAO BAI - RFID: " + rfid, "reject", client_addr);
+        save_data();
         return "NOT_FOUND\n";
     }
 
     return "ERROR|UNKNOWN_CMD\n";
 }
-
-// ============================================================
 //  THREAD CLIENT TCP
-// ============================================================
 void client_thread(SOCKET client_sock, ClientInfo ci) {
     {
         std::lock_guard<std::mutex> lock(g_mutex);
@@ -409,9 +396,7 @@ void client_thread(SOCKET client_sock, ClientInfo ci) {
     closesocket(client_sock);
 }
 
-// ============================================================
 //  JSON API /status
-// ============================================================
 std::string make_status_json() {
     std::lock_guard<std::mutex> lock(g_mutex);
     time_t now = time(nullptr);
@@ -542,19 +527,16 @@ void http_server_thread() {
     }
 }
 
-// ============================================================
 //  MAIN
-// ============================================================
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
 
     std::cout << "\n";
-    std::cout << "  ======================================================\n";
-    std::cout << "   SERVER HE THONG BAI DO XE THONG MINH - VKU DA NANG   \n";
+    std::cout << "   SERVER HE THONG BAI DO XE THONG MINH  \n";
     std::cout << "   Giao thuc: TCP Socket (8888) + HTTP REST API (9999) \n";
-    std::cout << "  ======================================================\n";
+    std::cout << "  -----------------------------------------------------\n";
 
     load_data();
 
@@ -580,8 +562,8 @@ int main() {
 
     std::cout << "  [OK] TCP Port 8888  : Dang lang nghe Client RFID\n";
     std::cout << "  [OK] HTTP Port 9999 : Dang phuc vu Dashboard REST API\n";
-    std::cout << "  [OK] Du lieu        : " << DATA_FILE << " (Tu dong luu ben vung)\n";
-    std::cout << "  ======================================================\n\n";
+    std::cout << "  [OK] Du lieu        : " << DATA_FILE << " ()\n";
+    std::cout << "  -----------------------------------------------------\n\n";
 
     while (true) {
         sockaddr_in client_addr{};
