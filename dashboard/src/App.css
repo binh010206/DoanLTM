@@ -229,9 +229,122 @@ body {
   font-family: var(--font-mono);
 }
 
-/*  
+/* ==========================================================================
+   NETWORK NODES MONITOR BAR (SERVER IP & CLIENT IP DISPLAY)
+   ========================================================================== */
+.network-nodes-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(10, 15, 26, 0.95) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.1);
+  border-radius: 20px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.node-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 280px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px 18px;
+  transition: all 0.3s ease;
+}
+
+.node-box:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: translateY(-2px);
+}
+
+.server-node-box {
+  border-left: 4px solid var(--neon-green);
+}
+
+.client-node-box {
+  border-left: 4px solid var(--neon-cyan);
+}
+
+.node-icon-badge {
+  font-size: 28px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.node-role-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.node-ip-value {
+  font-size: 19px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin: 2px 0;
+}
+
+.ip-highlight {
+  color: #38bdf8;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+}
+
+.client-ip-highlight {
+  color: #34d399;
+  text-shadow: 0 0 12px rgba(52, 211, 153, 0.5);
+}
+
+.node-sub-status {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.network-flow-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.flow-badge {
+  font-size: 10px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--neon-gold);
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.5px;
+}
+
+.flow-arrow {
+  color: var(--neon-gold);
+  font-size: 13px;
+  font-weight: 800;
+  margin-top: 4px;
+  animation: flowSlide 1.5s infinite;
+}
+
+@keyframes flowSlide {
+  0%, 100% { opacity: 0.6; transform: scaleX(1); }
+  50% { opacity: 1; transform: scaleX(1.15); }
+}
+
+/* ==========================================================================
    METRICS ROW (6 BOXES)
-     */
+   ========================================================================== */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);

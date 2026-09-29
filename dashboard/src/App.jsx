@@ -161,6 +161,12 @@ export default function App() {
     return item.type === filterType
   })
 
+  const latestClientIp = (log.length > 0 && log[0].client_ip)
+    ? log[0].client_ip
+    : (slots.find(s => s.occupied && s.client_ip)
+        ? `${slots.find(s => s.occupied).client_ip}:${slots.find(s => s.occupied).client_port}`
+        : 'Chờ Client quẹt thẻ...')
+
   return (
     <div className="cyber-app-wrapper">
       {/* Lưới viễn cảnh Cyber 3D nền */}
@@ -194,6 +200,36 @@ export default function App() {
             <div className="clock-tag">SYNC: {lastUpdate || '--:--:--'}</div>
           </div>
         </header>
+
+        {/* BẢNG HIỂN THỊ ĐỊA CHỈ MẠNG: SERVER IP & CLIENT IP */}
+        <section className="network-nodes-bar">
+          <div className="node-box server-node-box">
+            <div className="node-icon-badge">🖥️</div>
+            <div className="node-text-wrap">
+              <div className="node-role-label">ĐỊA CHỈ MÁY CHỦ (SERVER IP : PORT)</div>
+              <div className="node-ip-value font-mono">
+                <span className="ip-highlight">{host || '10.187.149.136'}</span>:8888
+              </div>
+              <div className="node-sub-status text-green">● Lắng nghe kết nối TCP Socket</div>
+            </div>
+          </div>
+
+          <div className="network-flow-indicator">
+            <div className="flow-badge">TCP GIAO THỨC PHÂN TÁN</div>
+            <div className="flow-arrow">⇄ ⇄ ⇄</div>
+          </div>
+
+          <div className="node-box client-node-box">
+            <div className="node-icon-badge">📱</div>
+            <div className="node-text-wrap">
+              <div className="node-role-label">ĐỊA CHỈ MÁY TRẠM (CLIENT IP : PORT)</div>
+              <div className="node-ip-value font-mono">
+                <span className="ip-highlight client-ip-highlight">{latestClientIp}</span>
+              </div>
+              <div className="node-sub-status text-cyan">● Trạm quẹt thẻ cổng bãi xe</div>
+            </div>
+          </div>
+        </section>
 
         {/* 6 Khối Thống Kê Chỉ Số */}
         <section className="metrics-grid">
