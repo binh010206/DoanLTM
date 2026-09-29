@@ -1,13 +1,15 @@
 {
-  "total_in": 14,
-  "total_out": 14,
-  "total_revenue": 285000,
+  "total_in": 15,
+  "total_out": 15,
+  "total_revenue": 290000,
   "slots": [
     {"id":1,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0},
     {"id":2,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0},
     {"id":3,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0}
   ],
   "log": [
+    {"time":"12:43:43","event":"Xe RA - O 1 - RFID: FF00AB12 - 5.000 VND","type":"exit","client_ip":"192.168.6.1:63487","fee":5000,"duration_sec":14},
+    {"time":"12:43:29","event":"Xe VAO - O 1 - RFID: FF00AB12","type":"entry","client_ip":"192.168.6.1:63487","fee":0,"duration_sec":0},
     {"time":"12:35:26","event":"Xe RA - O 3 - RFID: 11223344 - 5.000 VND","type":"exit","client_ip":"192.168.6.1:63487","fee":5000,"duration_sec":53},
     {"time":"12:35:24","event":"Xe RA - O 2 - RFID: FF00AB12 - 5.000 VND","type":"exit","client_ip":"192.168.6.1:63487","fee":5000,"duration_sec":53},
     {"time":"12:35:22","event":"Xe RA - O 1 - RFID: A1B2C3D4 - 10.000 VND","type":"exit","client_ip":"192.168.6.1:63487","fee":10000,"duration_sec":117},
