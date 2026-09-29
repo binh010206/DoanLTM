@@ -3,11 +3,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.NumberFormat;
+import java.util.Enumeration;
 import java.util.Locale;
 
 public class ParkingMonitor extends JFrame {
@@ -23,8 +27,8 @@ public class ParkingMonitor extends JFrame {
     private static final Color NEON_RED        = new Color(239, 68, 68);
     private static final Color NEON_GOLD       = new Color(245, 158, 11);
 
-    // Font chu
-    private static final Font FONT_TITLE   = new Font("Segoe UI", Font.BOLD, 18);
+    // Font chu chuan he thong Windows khong bi loi o vuong
+    private static final Font FONT_TITLE   = new Font("Segoe UI", Font.BOLD, 17);
     private static final Font FONT_HEADER  = new Font("Segoe UI", Font.BOLD, 13);
     private static final Font FONT_BIG_NUM = new Font("Segoe UI", Font.BOLD, 22);
     private static final Font FONT_REGULAR = new Font("Segoe UI", Font.PLAIN, 12);
@@ -74,6 +78,30 @@ public class ParkingMonitor extends JFrame {
         timer.start();
     }
 
+    private static String detectLocalIp() {
+        try {
+            Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+            while (nets.hasMoreElements()) {
+                NetworkInterface net = nets.nextElement();
+                if (!net.isUp() || net.isLoopback() || net.isVirtual()) continue;
+                String name = (net.getName() + " " + net.getDisplayName()).toLowerCase();
+                if (name.contains("vmware") || name.contains("virtual") || name.contains("vbox") || name.contains("wsl")) continue;
+                Enumeration<InetAddress> addrs = net.getInetAddresses();
+                while (addrs.hasMoreElements()) {
+                    InetAddress a = addrs.nextElement();
+                    if (a instanceof Inet4Address && !a.isLoopbackAddress()) {
+                        String host = a.getHostAddress();
+                        if (!host.startsWith("169.254")) return host;
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception ignored) {}
+        return "10.187.149.136";
+    }
+
     private JPanel createTopPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBackground(CARD_BG);
@@ -82,20 +110,13 @@ public class ParkingMonitor extends JFrame {
                 new EmptyBorder(12, 20, 12, 20)
         ));
 
-        // Logo & Title
-        JPanel titleGroup = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
-        titleGroup.setBackground(CARD_BG);
-
-        JLabel logo = new JLabel("🅿️");
-        logo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 28));
-        titleGroup.add(logo);
-
+        // Title
         JPanel titleText = new JPanel();
         titleText.setLayout(new BoxLayout(titleText, BoxLayout.Y_AXIS));
         titleText.setBackground(CARD_BG);
 
         JLabel sub = new JLabel("VKU ĐÀ NẴNG · BÁO CÁO LẬP TRÌNH MẠNG (DESKTOP GUI)");
-        sub.setFont(new Font("Segoe UI", Font.BOLD, 10));
+        sub.setFont(new Font("Segoe UI", Font.BOLD, 11));
         sub.setForeground(NEON_CYAN);
         titleText.add(sub);
 
@@ -104,8 +125,7 @@ public class ParkingMonitor extends JFrame {
         mainTitle.setForeground(TEXT_WHITE);
         titleText.add(mainTitle);
 
-        titleGroup.add(titleText);
-        panel.add(titleGroup, BorderLayout.WEST);
+        panel.add(titleText, BorderLayout.WEST);
 
         // Network Socket IP Bar (SERVER IP & CLIENT IP)
         JPanel netGroup = new JPanel(new GridLayout(1, 2, 14, 0));
@@ -115,14 +135,14 @@ public class ParkingMonitor extends JFrame {
         JPanel serverBox = new JPanel(new BorderLayout(6, 2));
         serverBox.setBackground(new Color(11, 15, 25));
         serverBox.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(16, 185, 129, 100), 1),
-                new EmptyBorder(6, 12, 6, 12)
+                BorderFactory.createLineBorder(new Color(16, 185, 129, 120), 1),
+                new EmptyBorder(6, 14, 6, 14)
         ));
         JLabel lblSrvRole = new JLabel("MÁY CHỦ (SERVER TCP : PORT)");
-        lblSrvRole.setFont(new Font("Segoe UI", Font.BOLD, 9));
+        lblSrvRole.setFont(new Font("Segoe UI", Font.BOLD, 10));
         lblSrvRole.setForeground(TEXT_MUTED);
-        lblServerIp = new JLabel("10.187.149.136:8888");
-        lblServerIp.setFont(FONT_MONO);
+        lblServerIp = new JLabel(detectLocalIp() + ":8888");
+        lblServerIp.setFont(new Font("Consolas", Font.BOLD, 13));
         lblServerIp.setForeground(NEON_GREEN);
         serverBox.add(lblSrvRole, BorderLayout.NORTH);
         serverBox.add(lblServerIp, BorderLayout.CENTER);
@@ -132,14 +152,14 @@ public class ParkingMonitor extends JFrame {
         JPanel clientBox = new JPanel(new BorderLayout(6, 2));
         clientBox.setBackground(new Color(11, 15, 25));
         clientBox.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(6, 182, 212, 100), 1),
-                new EmptyBorder(6, 12, 6, 12)
+                BorderFactory.createLineBorder(new Color(6, 182, 212, 120), 1),
+                new EmptyBorder(6, 14, 6, 14)
         ));
         JLabel lblCliRole = new JLabel("MÁY TRẠM (CLIENT SOCKET)");
-        lblCliRole.setFont(new Font("Segoe UI", Font.BOLD, 9));
+        lblCliRole.setFont(new Font("Segoe UI", Font.BOLD, 10));
         lblCliRole.setForeground(TEXT_MUTED);
         lblClientList = new JLabel("Chờ Client kết nối...");
-        lblClientList.setFont(FONT_MONO);
+        lblClientList.setFont(new Font("Consolas", Font.BOLD, 13));
         lblClientList.setForeground(NEON_CYAN);
         clientBox.add(lblCliRole, BorderLayout.NORTH);
         clientBox.add(lblClientList, BorderLayout.CENTER);
@@ -161,17 +181,17 @@ public class ParkingMonitor extends JFrame {
         lblTotalOut = new JLabel("0");
         lblRevenue  = new JLabel("0 ₫");
 
-        grid.add(createMetricCard("SỨC CHỨA", lblCapacity, TEXT_WHITE, "🏢"));
-        grid.add(createMetricCard("XE ĐANG ĐỖ", lblOccupied, NEON_RED, "🚘"));
-        grid.add(createMetricCard("CÒN TRỐNG", lblFree, NEON_GREEN, "🟢"));
-        grid.add(createMetricCard("TỔNG VÀO", lblTotalIn, TEXT_WHITE, "📥"));
-        grid.add(createMetricCard("TỔNG RA", lblTotalOut, TEXT_WHITE, "📤"));
-        grid.add(createMetricCard("DOANH THU", lblRevenue, NEON_GOLD, "💰"));
+        grid.add(createMetricCard("SỨC CHỨA", lblCapacity, TEXT_WHITE));
+        grid.add(createMetricCard("XE ĐANG ĐỖ", lblOccupied, NEON_RED));
+        grid.add(createMetricCard("CÒN TRỐNG", lblFree, NEON_GREEN));
+        grid.add(createMetricCard("TỔNG VÀO", lblTotalIn, TEXT_WHITE));
+        grid.add(createMetricCard("TỔNG RA", lblTotalOut, TEXT_WHITE));
+        grid.add(createMetricCard("DOANH THU", lblRevenue, NEON_GOLD));
 
         return grid;
     }
 
-    private JPanel createMetricCard(String title, JLabel valLabel, Color valColor, String icon) {
+    private JPanel createMetricCard(String title, JLabel valLabel, Color valColor) {
         JPanel card = new JPanel(new BorderLayout(8, 2));
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -179,8 +199,8 @@ public class ParkingMonitor extends JFrame {
                 new EmptyBorder(10, 14, 10, 14)
         ));
 
-        JLabel lblTitle = new JLabel(icon + " " + title);
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 10));
+        JLabel lblTitle = new JLabel(title);
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 11));
         lblTitle.setForeground(TEXT_MUTED);
 
         valLabel.setFont(FONT_BIG_NUM);
@@ -192,60 +212,119 @@ public class ParkingMonitor extends JFrame {
     }
 
     private JPanel createBaysSection() {
-        JPanel panel = new JPanel(new BorderLayout(0, 8));
+        JPanel panel = new JPanel(new GridLayout(1, 3, 14, 0));
         panel.setBackground(BG_DARK);
 
-        JLabel sectionTitle = new JLabel("📍 TRẠNG THÁI 3 Ô ĐỖ XE THỜI GIAN THỰC");
-        sectionTitle.setFont(FONT_HEADER);
-        sectionTitle.setForeground(TEXT_WHITE);
-        panel.add(sectionTitle, BorderLayout.NORTH);
-
-        JPanel baysGrid = new JPanel(new GridLayout(1, 3, 16, 0));
-        baysGrid.setBackground(BG_DARK);
         for (int i = 0; i < 3; i++) {
             bayPanels[i] = new BayPanel(i + 1);
-            baysGrid.add(bayPanels[i]);
+            panel.add(bayPanels[i]);
         }
-        panel.add(baysGrid, BorderLayout.CENTER);
         return panel;
     }
 
     private JPanel createLogPanel() {
-        JPanel panel = new JPanel(new BorderLayout(0, 6));
-        panel.setBackground(BG_DARK);
+        JPanel panel = new JPanel(new BorderLayout(0, 8));
+        panel.setBackground(CARD_BG);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(CARD_BORDER, 1),
+                new EmptyBorder(12, 16, 12, 16)
+        ));
 
-        JLabel title = new JLabel("📋 NHẬT KÝ GIAO DỊCH MẠNG (TRANSACTION LOG)");
+        // Header Panel
+        JPanel hdr = new JPanel(new BorderLayout());
+        hdr.setBackground(CARD_BG);
+
+        JLabel title = new JLabel("LỊCH SỬ GIAO DỊCH VÀO / RA TRẠM ĐỖ (TRANSACTION LOGS)");
         title.setFont(FONT_HEADER);
         title.setForeground(TEXT_WHITE);
-        panel.add(title, BorderLayout.NORTH);
 
-        String[] cols = {"THỜI GIAN", "CHI TIẾT SỰ KIỆN", "SOCKET CLIENT (IP:PORT)", "PHÍ (VND)", "LOẠI"};
+        JLabel liveBadge = new JLabel("● CẬP NHẬT TRỰC TIẾP");
+        liveBadge.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        liveBadge.setForeground(NEON_GREEN);
+
+        hdr.add(title, BorderLayout.WEST);
+        hdr.add(liveBadge, BorderLayout.EAST);
+        panel.add(hdr, BorderLayout.NORTH);
+
+        // Table
+        String[] cols = {"THỜI GIAN", "SỰ KIỆN GIAO DỊCH", "ĐỊA CHỈ IP SOCKET", "CƯỚC PHÍ", "TRẠNG THÁI"};
         logTableModel = new DefaultTableModel(cols, 0) {
             @Override
-            public boolean isCellEditable(int row, int col) { return false; }
+            public boolean isCellEditable(int row, int col) {
+                return false;
+            }
         };
 
         JTable table = new JTable(logTableModel);
-        table.setBackground(CARD_BG);
+        table.setBackground(new Color(11, 15, 25));
         table.setForeground(TEXT_WHITE);
-        table.setFont(FONT_REGULAR);
-        table.setRowHeight(26);
-        table.setShowGrid(false);
-        table.setIntercellSpacing(new Dimension(0, 1));
-        table.getTableHeader().setBackground(new Color(11, 15, 25));
-        table.getTableHeader().setForeground(TEXT_MUTED);
+        table.setGridColor(new Color(30, 41, 59));
+        table.setRowHeight(28);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        table.getTableHeader().setBackground(new Color(15, 23, 42));
+        table.getTableHeader().setForeground(NEON_CYAN);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 11));
+        table.getTableHeader().setBorder(BorderFactory.createLineBorder(CARD_BORDER));
 
-        // Can giua / dep bang
+        table.getColumnModel().getColumn(0).setPreferredWidth(90);
+        table.getColumnModel().getColumn(1).setPreferredWidth(360);
+        table.getColumnModel().getColumn(2).setPreferredWidth(170);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        table.getColumnModel().getColumn(4).setPreferredWidth(90);
+
+        // Custom Renderer cho Cot Trang Thai
+        table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object val, boolean isSelected, boolean hasFocus, int r, int c) {
+                JLabel l = (JLabel) super.getTableCellRendererComponent(t, val, isSelected, hasFocus, r, c);
+                l.setHorizontalAlignment(JLabel.CENTER);
+                l.setFont(new Font("Segoe UI", Font.BOLD, 11));
+                String v = (val != null) ? val.toString() : "";
+                if ("VÀO".equals(v)) {
+                    l.setForeground(NEON_GREEN);
+                } else if ("RA".equals(v)) {
+                    l.setForeground(NEON_CYAN);
+                } else {
+                    l.setForeground(NEON_RED);
+                }
+                l.setBackground(r % 2 == 0 ? new Color(11, 15, 25) : new Color(15, 23, 42));
+                return l;
+            }
+        });
+
+        // Renderer cho Cot Phi
+        table.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object val, boolean isSelected, boolean hasFocus, int r, int c) {
+                JLabel l = (JLabel) super.getTableCellRendererComponent(t, val, isSelected, hasFocus, r, c);
+                l.setHorizontalAlignment(JLabel.RIGHT);
+                l.setFont(FONT_MONO);
+                l.setForeground(NEON_GOLD);
+                l.setBackground(r % 2 == 0 ? new Color(11, 15, 25) : new Color(15, 23, 42));
+                return l;
+            }
+        });
+
+        // Renderer cho Cot Socket IP
+        table.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object val, boolean isSelected, boolean hasFocus, int r, int c) {
+                JLabel l = (JLabel) super.getTableCellRendererComponent(t, val, isSelected, hasFocus, r, c);
+                l.setHorizontalAlignment(JLabel.CENTER);
+                l.setFont(FONT_MONO);
+                l.setForeground(new Color(56, 189, 248));
+                l.setBackground(r % 2 == 0 ? new Color(11, 15, 25) : new Color(15, 23, 42));
+                return l;
+            }
+        });
+
+        // Renderer cho Thoi gian
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.getViewport().setBackground(CARD_BG);
+        scrollPane.getViewport().setBackground(new Color(11, 15, 25));
         scrollPane.setBorder(BorderFactory.createLineBorder(CARD_BORDER, 1));
         panel.add(scrollPane, BorderLayout.CENTER);
 
@@ -260,15 +339,13 @@ public class ParkingMonitor extends JFrame {
             if (resp.statusCode() == 200) {
                 parseAndUpdate(resp.body());
             }
-        } catch (Exception ignored) {
-            // Server chua bat
-        }
+        } catch (Exception ignored) {}
     }
 
     private void parseAndUpdate(String json) {
         SwingUtilities.invokeLater(() -> {
             try {
-                // Update 3 bays
+                // 1. Update 3 Bays
                 for (int i = 1; i <= 3; i++) {
                     int slotIdx = json.indexOf("{\"id\":" + i);
                     if (slotIdx != -1) {
@@ -287,7 +364,7 @@ public class ParkingMonitor extends JFrame {
                     }
                 }
 
-                // Update Stats
+                // 2. Update Metrics
                 int statsIdx = json.indexOf("\"stats\":{");
                 if (statsIdx != -1) {
                     String statsStr = json.substring(statsIdx);
@@ -295,7 +372,6 @@ public class ParkingMonitor extends JFrame {
                     long totalOut = extractNum(statsStr, "total_out");
                     long revenue  = extractNum(statsStr, "revenue");
                     long occ      = extractNum(statsStr, "occupancy");
-                    long clients  = extractNum(statsStr, "active_clients");
 
                     lblCapacity.setText("3 Ô");
                     lblOccupied.setText(occ + " Xe");
@@ -303,18 +379,10 @@ public class ParkingMonitor extends JFrame {
                     lblTotalIn.setText(String.valueOf(totalIn));
                     lblTotalOut.setText(String.valueOf(totalOut));
                     lblRevenue.setText(NumberFormat.getNumberInstance(Locale.GERMANY).format(revenue) + " ₫");
-
-                    // Connected clients list
-                    if (clients > 0) {
-                        lblClientList.setText(clients + " Trạm đang Online");
-                        lblClientList.setForeground(NEON_GREEN);
-                    } else {
-                        lblClientList.setText("Chờ Client kết nối...");
-                        lblClientList.setForeground(TEXT_MUTED);
-                    }
                 }
 
-                // Update Log
+                // 3. Update Log Table
+                String lastLogIp = "";
                 int logIdx = json.indexOf("\"log\":[");
                 if (logIdx != -1) {
                     int logEnd = json.indexOf("],\"clients\":", logIdx);
@@ -330,12 +398,55 @@ public class ParkingMonitor extends JFrame {
                             String ip   = extractStr(entry, "client_ip");
                             long f      = extractNum(entry, "fee");
                             String type = extractStr(entry, "type");
-                            String typeStr = "entry".equals(type) ? "⬆️ VÀO" : ("exit".equals(type) ? "⬇️ RA" : "🚫 TỪ CHỐI");
+                            String typeStr = "entry".equals(type) ? "VÀO" : ("exit".equals(type) ? "RA" : "TỪ CHỐI");
                             String feeStr  = f > 0 ? NumberFormat.getNumberInstance(Locale.GERMANY).format(f) + " ₫" : "--";
                             logTableModel.addRow(new Object[]{t, ev, ip, feeStr, typeStr});
+                            if (lastLogIp.isEmpty() && ip != null && !ip.isEmpty() && !"-".equals(ip)) {
+                                lastLogIp = ip;
+                            }
                         }
                     }
                 }
+
+                // 4. Update Connected Clients list
+                int clientsIdx = json.indexOf("\"clients\":[");
+                boolean foundClients = false;
+                if (clientsIdx != -1) {
+                    int arrStart = clientsIdx + 11;
+                    int clientsEnd = json.indexOf("]", arrStart);
+                    if (clientsEnd > arrStart) {
+                        String clientsJson = json.substring(arrStart, clientsEnd);
+                        StringBuilder sb = new StringBuilder();
+                        int p = 0;
+                        while ((p = clientsJson.indexOf("\"addr\":\"", p)) != -1) {
+                            p += 8;
+                            int endQ = clientsJson.indexOf("\"", p);
+                            if (endQ != -1) {
+                                String addr = clientsJson.substring(p, endQ);
+                                if (sb.length() > 0) sb.append(", ");
+                                sb.append(addr);
+                                p = endQ + 1;
+                            }
+                        }
+                        if (sb.length() > 0) {
+                            lblClientList.setText(sb.toString() + " (Online)");
+                            lblClientList.setForeground(NEON_GREEN);
+                            foundClients = true;
+                        }
+                    }
+                }
+
+                // Neu chua co client online, lay IP tu log gan nhat
+                if (!foundClients) {
+                    if (!lastLogIp.isEmpty()) {
+                        lblClientList.setText(lastLogIp + " (Gần nhất)");
+                        lblClientList.setForeground(TEXT_MUTED);
+                    } else {
+                        lblClientList.setText("Chờ Client kết nối...");
+                        lblClientList.setForeground(TEXT_MUTED);
+                    }
+                }
+
             } catch (Exception ignored) {}
         });
     }
@@ -364,21 +475,20 @@ public class ParkingMonitor extends JFrame {
     }
 
     // =========================================================================
-    //  BAY PANEL (VE XE 3D + THONG SO)
+    //  BAY PANEL (VE XE + THONG SO)
     // =========================================================================
-    static class BayPanel extends JPanel {
+    class BayPanel extends JPanel {
         private final int bayId;
         private boolean occupied = false;
-        private String rfid = "";
-        private String timeIn = "";
+        private String rfid = "--";
+        private String timeIn = "--";
         private long durationSec = 0;
         private long fee = 0;
-        private String clientAddr = "";
+        private String clientAddr = "--";
 
-        private JLabel lblBayTitle;
         private JLabel lblStatusBadge;
-        private CarCanvas carCanvas;
         private JLabel lblRfid, lblTime, lblDur, lblFee, lblSocket;
+        private CarCanvas carCanvas;
 
         public BayPanel(int id) {
             this.bayId = id;
@@ -389,48 +499,54 @@ public class ParkingMonitor extends JFrame {
                     new EmptyBorder(12, 14, 12, 14)
             ));
 
-            // Top
+            // Header
             JPanel top = new JPanel(new BorderLayout());
             top.setBackground(CARD_BG);
-            lblBayTitle = new JLabel("Ô ĐỖ 0" + bayId);
-            lblBayTitle.setFont(FONT_HEADER);
-            lblBayTitle.setForeground(TEXT_WHITE);
+
+            JLabel name = new JLabel("Ô ĐỖ SỐ " + bayId);
+            name.setFont(FONT_HEADER);
+            name.setForeground(TEXT_WHITE);
 
             lblStatusBadge = new JLabel("● ĐANG TRỐNG");
-            lblStatusBadge.setFont(new Font("Segoe UI", Font.BOLD, 10));
+            lblStatusBadge.setFont(new Font("Segoe UI", Font.BOLD, 11));
             lblStatusBadge.setForeground(NEON_GREEN);
 
-            top.add(lblBayTitle, BorderLayout.WEST);
+            top.add(name, BorderLayout.WEST);
             top.add(lblStatusBadge, BorderLayout.EAST);
             add(top, BorderLayout.NORTH);
 
             // Center Visual
             carCanvas = new CarCanvas();
-            carCanvas.setPreferredSize(new Dimension(280, 110));
+            carCanvas.setPreferredSize(new Dimension(280, 115));
             add(carCanvas, BorderLayout.CENTER);
 
             // Info panel
-            JPanel info = new JPanel(new GridLayout(5, 1, 2, 4));
-            info.setBackground(CARD_BG);
+            JPanel info = new JPanel(new GridLayout(5, 1, 0, 5));
+            info.setBackground(new Color(11, 15, 25));
             info.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createMatteBorder(1, 0, 0, 0, CARD_BORDER),
-                    new EmptyBorder(8, 0, 0, 0)
+                    BorderFactory.createLineBorder(new Color(30, 41, 59), 1),
+                    new EmptyBorder(8, 12, 8, 12)
             ));
 
-            lblRfid = createRow(info, "Mã RFID:", "--");
-            lblTime = createRow(info, "Giờ vào:", "--");
-            lblDur  = createRow(info, "Thời gian:", "--");
-            lblFee  = createRow(info, "Phí tạm tính:", "--");
+            lblRfid   = addRow(info, "Mã RFID:", "--");
+            lblTime   = addRow(info, "Giờ vào:", "--");
+            lblDur    = addRow(info, "Đang đỗ:", "--");
+            lblFee    = addRow(info, "Cước tạm tính:", "--");
+            lblSocket = addRow(info, "Trạm Socket:", "--");
+
+            lblRfid.setFont(FONT_MONO);
+            lblRfid.setForeground(NEON_CYAN);
+            lblFee.setFont(FONT_MONO);
             lblFee.setForeground(NEON_GOLD);
-            lblSocket = createRow(info, "Socket:", "--");
-            lblSocket.setFont(FONT_MONO);
+            lblSocket.setFont(new Font("Consolas", Font.PLAIN, 11));
+            lblSocket.setForeground(new Color(56, 189, 248));
 
             add(info, BorderLayout.SOUTH);
         }
 
-        private JLabel createRow(JPanel parent, String label, String val) {
+        private JLabel addRow(JPanel parent, String label, String val) {
             JPanel p = new JPanel(new BorderLayout());
-            p.setBackground(CARD_BG);
+            p.setBackground(new Color(11, 15, 25));
             JLabel l = new JLabel(label);
             l.setFont(FONT_REGULAR);
             l.setForeground(TEXT_MUTED);
@@ -497,12 +613,12 @@ public class ParkingMonitor extends JFrame {
 
                 // Mat san bai do
                 g2.setColor(new Color(255, 255, 255, 20));
-                g2.drawRoundRect(15, 10, w - 30, h - 20, 10, 10);
+                g2.drawRoundRect(12, 6, w - 24, h - 12, 10, 10);
 
                 if (occupied) {
-                    // Ve xe the thao Cyberpunk
+                    // Ve xe the thao Cyberpunk (dua xe len tren de khong bi che bien so)
                     int cx = w / 2 - 50;
-                    int cy = h / 2 - 20;
+                    int cy = h / 2 - 28;
 
                     // Den pha chieu sang
                     GradientPaint beam = new GradientPaint(cx + 90, cy + 15, new Color(254, 240, 138, 120),
@@ -511,36 +627,41 @@ public class ParkingMonitor extends JFrame {
                     g2.fillPolygon(new int[]{cx + 90, cx + 140, cx + 140, cx + 90},
                             new int[]{cy + 10, cy, cy + 30, cy + 20}, 4);
 
-                    // Banh xe
+                    // Banh xe (dat tai cy + 22 den cy + 38)
                     g2.setColor(new Color(2, 6, 23));
-                    g2.fillOval(cx + 10, cy + 25, 18, 18);
-                    g2.fillOval(cx + 70, cy + 25, 18, 18);
+                    g2.fillOval(cx + 10, cy + 22, 16, 16);
+                    g2.fillOval(cx + 70, cy + 22, 16, 16);
                     g2.setColor(TEXT_MUTED);
-                    g2.drawOval(cx + 10, cy + 25, 18, 18);
-                    g2.drawOval(cx + 70, cy + 25, 18, 18);
+                    g2.drawOval(cx + 10, cy + 22, 16, 16);
+                    g2.drawOval(cx + 70, cy + 22, 16, 16);
 
                     // Than xe
                     Color carColor = (bayId == 1) ? new Color(56, 189, 248) :
                             (bayId == 2 ? new Color(244, 63, 94) : new Color(245, 158, 11));
                     g2.setColor(carColor);
-                    g2.fillRoundRect(cx, cy + 10, 100, 20, 12, 12);
+                    g2.fillRoundRect(cx, cy + 8, 100, 20, 12, 12);
 
                     // Cabin & Kinh
                     g2.setColor(new Color(15, 23, 42));
-                    g2.fillRoundRect(cx + 25, cy - 2, 45, 16, 8, 8);
+                    g2.fillRoundRect(cx + 25, cy - 4, 45, 16, 8, 8);
                     g2.setColor(NEON_CYAN);
-                    g2.fillRoundRect(cx + 45, cy + 1, 20, 10, 4, 4);
+                    g2.fillRoundRect(cx + 45, cy - 1, 20, 10, 4, 4);
 
                     // Den pha LED
                     g2.setColor(new Color(254, 240, 138));
-                    g2.fillOval(cx + 96, cy + 14, 5, 8);
+                    g2.fillOval(cx + 96, cy + 12, 5, 8);
 
-                    // Bien so the RFID
+                    // Bien so the RFID (Dat ben duoi hanh trinh banh xe, KHONG BI DE LEN BANH XE)
+                    int plateY = cy + 44;
                     g2.setColor(Color.WHITE);
-                    g2.fillRoundRect(cx + 15, cy + 33, 70, 14, 4, 4);
-                    g2.setColor(Color.BLACK);
-                    g2.setFont(new Font("Consolas", Font.BOLD, 10));
-                    g2.drawString(rfid, cx + 20, cy + 44);
+                    g2.fillRoundRect(cx + 8, plateY, 84, 18, 6, 6);
+                    g2.setColor(new Color(15, 23, 42));
+                    g2.drawRoundRect(cx + 8, plateY, 84, 18, 6, 6);
+                    g2.setFont(new Font("Consolas", Font.BOLD, 12));
+                    FontMetrics fm = g2.getFontMetrics();
+                    int textX = cx + 8 + (84 - fm.stringWidth(rfid)) / 2;
+                    int textY = plateY + ((18 - fm.getHeight()) / 2) + fm.getAscent();
+                    g2.drawString(rfid, textX, textY);
                 } else {
                     // Hologram chu P
                     g2.setColor(new Color(16, 185, 129, 60));
