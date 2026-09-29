@@ -128,6 +128,8 @@ int main(int argc, char* argv[]) {
     WSAStartup(MAKEWORD(2, 2), &wsa);
 
     std::string server_ip = "127.0.0.1";
+    int server_port = 8888;
+
     if (argc > 1) {
         server_ip = argv[1];
     } else {
@@ -135,8 +137,18 @@ int main(int argc, char* argv[]) {
         std::string input;
         std::getline(std::cin, input);
         if (!input.empty()) {
-            // Xoa khoang trang neu co
             input.erase(std::remove_if(input.begin(), input.end(), [](char c){ return c == ' ' || c == '\r' || c == '\n'; }), input.end());
+            if (input.rfind("http://", 0) == 0) input = input.substr(7);
+            if (input.rfind("https://", 0) == 0) input = input.substr(8);
+            size_t colon = input.find(':');
+            if (colon != std::string::npos) {
+                std::string port_str = input.substr(colon + 1);
+                input = input.substr(0, colon);
+                try {
+                    int p = std::stoi(port_str);
+                    if (p > 0 && p < 65536) server_port = p;
+                } catch (...) {}
+            }
             if (!input.empty()) server_ip = input;
         }
     }
@@ -144,10 +156,10 @@ int main(int argc, char* argv[]) {
     SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     sockaddr_in srv{};
     srv.sin_family = AF_INET;
-    srv.sin_port   = htons(8888);
+    srv.sin_port   = htons(server_port);
     inet_pton(AF_INET, server_ip.c_str(), &srv.sin_addr);
 
-    std::cout << "  Dang ket noi toi Server TCP: " << server_ip << ":8888...\n";
+    std::cout << "  Dang ket noi toi Server TCP: " << server_ip << ":" << server_port << "...\n";
 
     if (connect(sock, (sockaddr*)&srv, sizeof(srv)) != 0) {
         std::cerr << "\n  [LOI] Khong the ket noi toi " << server_ip << ":8888!\n";
