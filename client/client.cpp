@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #pragma comment(lib, "Ws2_32.lib")
 
 // Danh sach the chip RFID vat ly phat cho khach vang lai
@@ -121,27 +122,42 @@ bool send_cmd(SOCKET sock, const std::string& cmd, const std::string& rfid) {
     return true;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     SetConsoleOutputCP(CP_UTF8);
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
+
+    std::string server_ip = "127.0.0.1";
+    if (argc > 1) {
+        server_ip = argv[1];
+    } else {
+        std::cout << "\n  Nhap dia chi IP cua Server (Nhan Enter de dung 127.0.0.1): ";
+        std::string input;
+        std::getline(std::cin, input);
+        if (!input.empty()) {
+            // Xoa khoang trang neu co
+            input.erase(std::remove_if(input.begin(), input.end(), [](char c){ return c == ' ' || c == '\r' || c == '\n'; }), input.end());
+            if (!input.empty()) server_ip = input;
+        }
+    }
 
     SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     sockaddr_in srv{};
     srv.sin_family = AF_INET;
     srv.sin_port   = htons(8888);
-    inet_pton(AF_INET, "127.0.0.1", &srv.sin_addr);
+    inet_pton(AF_INET, server_ip.c_str(), &srv.sin_addr);
 
-    std::cout << "\n  Dang ket noi toi Server TCP 127.0.0.1:8888...\n";
+    std::cout << "  Dang ket noi toi Server TCP: " << server_ip << ":8888...\n";
 
     if (connect(sock, (sockaddr*)&srv, sizeof(srv)) != 0) {
-        std::cerr << "  [LOI] Khong the ket noi! Hay chac chan server.exe dang chay.\n";
+        std::cerr << "\n  [LOI] Khong the ket noi toi " << server_ip << ":8888!\n";
+        std::cerr << "  -> Kiem tra lai IP Server hoac Firewall (Tuong lua) tren may Server.\n\n";
         system("pause");
         return 1;
     }
 
     print_header();
-    std::cout << "   [OK] Da ket noi toi Server TCP: 127.0.0.1:8888\n";
+    std::cout << "   [OK] Da ket noi toi Server TCP: " << server_ip << ":8888\n";
 
     while (true) {
         std::cout << "\n  - MENU DIEU KHIEN -\n";
