@@ -161,11 +161,13 @@ export default function App() {
     return item.type === filterType
   })
 
+  const serverDisplayIp = (!host || host === 'localhost' || host === '127.0.0.1') ? '10.187.149.136' : host
+  const isClientOnline = (stats.active_clients || 0) > 0
   const latestClientIp = (log.length > 0 && log[0].client_ip)
     ? log[0].client_ip
     : (slots.find(s => s.occupied && s.client_ip)
         ? `${slots.find(s => s.occupied).client_ip}:${slots.find(s => s.occupied).client_port}`
-        : 'Chờ Client quẹt thẻ...')
+        : '')
 
   return (
     <div className="cyber-app-wrapper">
@@ -208,7 +210,7 @@ export default function App() {
             <div className="node-text-wrap">
               <div className="node-role-label">ĐỊA CHỈ MÁY CHỦ (SERVER IP : PORT)</div>
               <div className="node-ip-value font-mono">
-                <span className="ip-highlight">{host || '10.187.149.136'}</span>:8888
+                <span className="ip-highlight">{serverDisplayIp}</span>:8888
               </div>
               <div className="node-sub-status text-green">● Lắng nghe kết nối TCP Socket</div>
             </div>
@@ -224,9 +226,21 @@ export default function App() {
             <div className="node-text-wrap">
               <div className="node-role-label">ĐỊA CHỈ MÁY TRẠM (CLIENT IP : PORT)</div>
               <div className="node-ip-value font-mono">
-                <span className="ip-highlight client-ip-highlight">{latestClientIp}</span>
+                {isClientOnline ? (
+                  <span className="ip-highlight client-ip-highlight">{latestClientIp || '10.187.149.220:60238'}</span>
+                ) : (
+                  <span className="text-muted" style={{ fontSize: '15px' }}>
+                    {latestClientIp ? `${latestClientIp} (Đã ngắt)` : 'Chờ kết nối...'}
+                  </span>
+                )}
               </div>
-              <div className="node-sub-status text-cyan">● Trạm quẹt thẻ cổng bãi xe</div>
+              <div className="node-sub-status">
+                {isClientOnline ? (
+                  <span className="text-green">● ĐANG ONLINE ({stats.active_clients} Client)</span>
+                ) : (
+                  <span className="text-danger">○ ĐÃ NGẮT KẾT NỐI (OFFLINE)</span>
+                )}
+              </div>
             </div>
           </div>
         </section>
