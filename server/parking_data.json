@@ -1,13 +1,18 @@
 {
-  "total_in": 9,
-  "total_out": 9,
-  "total_revenue": 255000,
+  "total_in": 11,
+  "total_out": 11,
+  "total_revenue": 265000,
   "slots": [
     {"id":1,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0},
     {"id":2,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0},
     {"id":3,"occupied":false,"rfid":"","time_in":0,"client_ip":"","client_port":0}
   ],
   "log": [
+    {"time":"12:20:29","event":"Xe RA - O 2 - RFID: FF00AB12 - 5.000 VND","type":"exit","client_ip":"192.168.6.1:61355","fee":5000,"duration_sec":17},
+    {"time":"12:20:21","event":"TU CHOI - THE CHUA VAO BAI - RFID: A1B2C3D4","type":"reject","client_ip":"192.168.6.1:61355","fee":0,"duration_sec":0},
+    {"time":"12:20:18","event":"Xe RA - O 1 - RFID: 11223344 - 5.000 VND","type":"exit","client_ip":"192.168.6.1:61355","fee":5000,"duration_sec":15},
+    {"time":"12:20:12","event":"Xe VAO - O 2 - RFID: FF00AB12","type":"entry","client_ip":"192.168.6.1:61355","fee":0,"duration_sec":0},
+    {"time":"12:20:03","event":"Xe VAO - O 1 - RFID: 11223344","type":"entry","client_ip":"192.168.6.1:61355","fee":0,"duration_sec":0},
     {"time":"11:34:32","event":"Xe RA - O 2 - RFID: FF00AB12 - 5.000 VND","type":"exit","client_ip":"10.187.149.220:60238","fee":5000,"duration_sec":36},
     {"time":"11:34:29","event":"Xe RA - O 1 - RFID: A1B2C3D4 - 15.000 VND","type":"exit","client_ip":"10.187.149.220:60238","fee":15000,"duration_sec":129},
     {"time":"11:33:56","event":"Xe VAO - O 2 - RFID: FF00AB12","type":"entry","client_ip":"10.187.149.220:60238","fee":0,"duration_sec":0},

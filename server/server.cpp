@@ -52,6 +52,7 @@ int     g_total_in       = 0;
 int     g_total_out      = 0;
 long    g_total_revenue  = 0;
 int     g_active_clients = 0;
+std::vector<ClientInfo> g_connected_clients;
 
 const long RATE_PER_MINUTE = 5000;
 const std::string DATA_FILE = "parking_data.json";
@@ -368,9 +369,10 @@ std::string handle_message(const std::string& msg, const ClientInfo& ci) {
 void client_thread(SOCKET client_sock, ClientInfo ci) {
     {
         std::lock_guard<std::mutex> lock(g_mutex);
-        g_active_clients++;
+        g_connected_clients.push_back(ci);
+        g_active_clients = (int)g_connected_clients.size();
     }
-    std::cout << "\n  [+] Client moi ket noi: " << ci.ip << ":" << ci.port << "\n";
+    std::cout << "\n  [+] Client moi ket noi: " << ci.ip << ":" << ci.port << " (Tong: " << g_active_clients << " client)\n";
 
     char buf[1024];
     while (true) {
@@ -390,9 +392,15 @@ void client_thread(SOCKET client_sock, ClientInfo ci) {
 
     {
         std::lock_guard<std::mutex> lock(g_mutex);
-        g_active_clients--;
+        for (auto it = g_connected_clients.begin(); it != g_connected_clients.end(); ++it) {
+            if (it->ip == ci.ip && it->port == ci.port) {
+                g_connected_clients.erase(it);
+                break;
+            }
+        }
+        g_active_clients = (int)g_connected_clients.size();
     }
-    std::cout << "  [-] Client ngat: " << ci.ip << ":" << ci.port << "\n";
+    std::cout << "  [-] Client ngat: " << ci.ip << ":" << ci.port << " (Con lai: " << g_active_clients << " client)\n";
     closesocket(client_sock);
 }
 
@@ -433,6 +441,13 @@ std::string make_status_json() {
            << ",\"duration_sec\":" << g_log[i].duration_sec
            << "}";
         if (i + 1 < g_log.size()) ss << ",";
+    }
+    ss << "],\"clients\":[";
+    for (size_t i = 0; i < g_connected_clients.size(); i++) {
+        ss << "{\"ip\":\"" << g_connected_clients[i].ip << "\""
+           << ",\"port\":" << g_connected_clients[i].port
+           << ",\"addr\":\"" << g_connected_clients[i].ip << ":" << g_connected_clients[i].port << "\"}";
+        if (i + 1 < g_connected_clients.size()) ss << ",";
     }
     ss << "],\"stats\":{"
        << "\"total_in\":" << g_total_in

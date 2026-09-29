@@ -84,6 +84,7 @@ export default function App() {
   const [connMode, setConnMode] = useState('disconnected') // 'websocket' | 'polling' | 'disconnected'
   const [lastUpdate, setLastUpdate] = useState('')
   const [filterType, setFilterType] = useState('all')
+  const [connectedClients, setConnectedClients] = useState([])
 
   const wsRef = useRef(null)
   const pollingRef = useRef(null)
@@ -92,6 +93,7 @@ export default function App() {
     if (data.slots) setSlots(data.slots)
     if (data.log) setLog(data.log)
     if (data.stats) setStats(data.stats)
+    if (data.clients) setConnectedClients(data.clients)
     setLastUpdate(new Date().toLocaleTimeString('vi-VN'))
   }, [])
 
@@ -224,19 +226,28 @@ export default function App() {
           <div className="node-box client-node-box">
             <div className="node-icon-badge">📱</div>
             <div className="node-text-wrap">
-              <div className="node-role-label">ĐỊA CHỈ MÁY TRẠM (CLIENT IP : PORT)</div>
-              <div className="node-ip-value font-mono">
-                {isClientOnline ? (
-                  <span className="ip-highlight client-ip-highlight">{latestClientIp || '10.187.149.220:60238'}</span>
+              <div className="node-role-label">DANH SÁCH MÁY TRẠM (CLIENT IP : PORT)</div>
+              <div className="node-clients-container">
+                {connectedClients.length > 0 ? (
+                  <div className="client-chips-list">
+                    {connectedClients.map((c, idx) => (
+                      <div key={idx} className="client-chip-item">
+                        <span className="chip-dot-green"></span>
+                        <span className="chip-tag font-mono">Trạm 0{idx + 1}: {c.addr || `${c.ip}:${c.port}`}</span>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  <span className="text-muted" style={{ fontSize: '15px' }}>
-                    {latestClientIp ? `${latestClientIp} (Đã ngắt)` : 'Chờ kết nối...'}
-                  </span>
+                  <div className="node-ip-value font-mono">
+                    <span className="text-muted" style={{ fontSize: '15px' }}>
+                      {latestClientIp ? `${latestClientIp} (Đã ngắt)` : 'Chờ kết nối...'}
+                    </span>
+                  </div>
                 )}
               </div>
               <div className="node-sub-status">
-                {isClientOnline ? (
-                  <span className="text-green">● ĐANG ONLINE ({stats.active_clients} Client)</span>
+                {connectedClients.length > 0 ? (
+                  <span className="text-green">● ĐANG ONLINE ({connectedClients.length} Trạm quẹt thẻ)</span>
                 ) : (
                   <span className="text-danger">○ ĐÃ NGẮT KẾT NỐI (OFFLINE)</span>
                 )}

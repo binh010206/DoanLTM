@@ -305,6 +305,40 @@ body {
   text-shadow: 0 0 12px rgba(52, 211, 153, 0.5);
 }
 
+.node-clients-container {
+  margin: 4px 0;
+}
+
+.client-chips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.client-chip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.chip-dot-green {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+}
+
+.chip-tag {
+  font-size: 13px;
+  font-weight: 700;
+  color: #34d399;
+}
+
 .node-sub-status {
   font-size: 11px;
   font-weight: 600;
