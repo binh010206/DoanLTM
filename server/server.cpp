@@ -307,7 +307,7 @@ std::string handle_message(const std::string& msg, const ClientInfo& ci) {
                 std::cout << "  [VAO] " << get_time()
                           << " | RFID=" << rfid
                           << " | Cap O " << s.id
-                          << " | Client=" << client_addr << "\n";
+                          << " | Client=" << client_addr << std::endl;
 
                 save_data();
                 return "OK|SLOT_" + std::to_string(s.id) + "\n";
@@ -315,7 +315,7 @@ std::string handle_message(const std::string& msg, const ClientInfo& ci) {
         }
 
         // 3. Het cho
-        std::cout << "  [CANH BAO] BAI DAY - Tu choi the " << rfid << "\n";
+        std::cout << "  [CANH BAO] BAI DAY - Tu choi the " << rfid << std::endl;
         add_log("TU CHOI - BAI DAY - RFID: " + rfid, "reject", client_addr);
         save_data();
         return "FULL\n";
@@ -348,7 +348,7 @@ std::string handle_message(const std::string& msg, const ClientInfo& ci) {
                           << " | RFID=" << rfid
                           << " | Giai phong O " << id
                           << " | Do: " << dur_min << "p" << dur_sec << "s"
-                          << " | Thu: " << format_vnd(fee) << "\n";
+                          << " | Thu: " << format_vnd(fee) << std::endl;
 
                 save_data();
 
@@ -357,7 +357,7 @@ std::string handle_message(const std::string& msg, const ClientInfo& ci) {
                     + "|DURATION:" + std::to_string(duration) + "s\n";
             }
         }
-        std::cout << "  [?] The " << rfid << " KHONG TIM THAY TRONG BAI!\n";
+        std::cout << "  [?] The " << rfid << " KHONG TIM THAY TRONG BAI!" << std::endl;
         add_log("TU CHOI - THE CHUA VAO BAI - RFID: " + rfid, "reject", client_addr);
         save_data();
         return "NOT_FOUND\n";
@@ -372,7 +372,11 @@ void client_thread(SOCKET client_sock, ClientInfo ci) {
         g_connected_clients.push_back(ci);
         g_active_clients = (int)g_connected_clients.size();
     }
-    std::cout << "\n  [+] Client moi ket noi: " << ci.ip << ":" << ci.port << " (Tong: " << g_active_clients << " client)\n";
+    std::cout << "\n=========================================================\n"
+              << "  [+] CO MAY TRAM (CLIENT) KET NOI DEN!\n"
+              << "      -> Dia chi Socket Client : " << ci.ip << ":" << ci.port << "\n"
+              << "      -> Tong so Client online : " << g_active_clients << " may tram\n"
+              << "=========================================================" << std::endl;
 
     char buf[1024];
     while (true) {
@@ -385,7 +389,16 @@ void client_thread(SOCKET client_sock, ClientInfo ci) {
         std::string line;
         while (std::getline(stream, line)) {
             if (line.empty() || line == "\r") continue;
+
+            std::cout << "\n[" << get_time() << "] [TCP RECV] Nhan tu Client [" << ci.ip << ":" << ci.port << "]: \"" << line << "\"" << std::endl;
+
             std::string response = handle_message(line, ci);
+
+            std::string resp_print = response;
+            if (!resp_print.empty() && resp_print.back() == '\n') resp_print.pop_back();
+
+            std::cout << "[" << get_time() << "] [TCP SEND] Phan hoi cho Client [" << ci.ip << ":" << ci.port << "]: \"" << resp_print << "\"" << std::endl;
+
             send(client_sock, response.c_str(), (int)response.size(), 0);
         }
     }
@@ -400,7 +413,7 @@ void client_thread(SOCKET client_sock, ClientInfo ci) {
         }
         g_active_clients = (int)g_connected_clients.size();
     }
-    std::cout << "  [-] Client ngat: " << ci.ip << ":" << ci.port << " (Con lai: " << g_active_clients << " client)\n";
+    std::cout << "\n[-] Client ngat ket noi: " << ci.ip << ":" << ci.port << " (Con lai: " << g_active_clients << " client)" << std::endl;
     closesocket(client_sock);
 }
 

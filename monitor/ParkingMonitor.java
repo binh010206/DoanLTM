@@ -679,8 +679,14 @@ public class ParkingMonitor extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ignored) {}
+                // Kich hoat theme hien dai FlatLaf Dark (phong cach AtlantaFX / IntelliJ Dark)
+                Class<?> flatLafClass = Class.forName("com.formdev.flatlaf.FlatDarkLaf");
+                flatLafClass.getMethod("setup").invoke(null);
+            } catch (Throwable t) {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception ignored) {}
+            }
             new ParkingMonitor().setVisible(true);
         });
     }

@@ -110,14 +110,17 @@ void parse_response(const std::string& resp) {
 
 bool send_cmd(SOCKET sock, const std::string& cmd, const std::string& rfid) {
     std::string msg = cmd + "|" + rfid + "\n";
-    std::cout << "\n  --> [TCP SEND] " << cmd << "|" << rfid << "\n";
+    std::cout << "\n  --> [TCP GUI]  " << cmd << "|" << rfid << std::endl;
     send(sock, msg.c_str(), (int)msg.size(), 0);
 
     char buf[512] = {};
     int n = recv(sock, buf, sizeof(buf) - 1, 0);
     if (n <= 0) return false;
     std::string resp(buf, n);
-    std::cout << "  <-- [TCP RECV] " << resp;
+    std::string resp_print = resp;
+    if (!resp_print.empty() && resp_print.back() == '\n') resp_print.pop_back();
+
+    std::cout << "  <-- [TCP NHAN] " << resp_print << std::endl;
     parse_response(resp);
     return true;
 }
@@ -159,17 +162,29 @@ int main(int argc, char* argv[]) {
     srv.sin_port   = htons(server_port);
     inet_pton(AF_INET, server_ip.c_str(), &srv.sin_addr);
 
-    std::cout << "  Dang ket noi toi Server TCP: " << server_ip << ":" << server_port << "...\n";
+    std::cout << "  Dang ket noi toi Server TCP: " << server_ip << ":" << server_port << "..." << std::endl;
 
     if (connect(sock, (sockaddr*)&srv, sizeof(srv)) != 0) {
-        std::cerr << "\n  [LOI] Khong the ket noi toi " << server_ip << ":8888!\n";
+        std::cerr << "\n  [LOI] Khong the ket noi toi " << server_ip << ":" << server_port << "!\n";
         std::cerr << "  -> Kiem tra lai IP Server hoac Firewall (Tuong lua) tren may Server.\n\n";
         system("pause");
         return 1;
     }
 
-    print_header();
-    std::cout << "   [OK] Da ket noi toi Server TCP: " << server_ip << ":8888\n";
+    // Lay dia chi IP va Port cua may tram nay (getsockname)
+    sockaddr_in local_addr{};
+    int local_len = sizeof(local_addr);
+    getsockname(sock, (sockaddr*)&local_addr, &local_len);
+    char local_ip_buf[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &local_addr.sin_addr, local_ip_buf, sizeof(local_ip_buf));
+    std::string local_ip = local_ip_buf;
+    int local_port = ntohs(local_addr.sin_port);
+
+    std::cout << "\n=========================================================\n"
+              << "  [OK] KET NOI THANH CONG TOI SERVER TCP!\n"
+              << "       -> May chu Server (Doi phuong) : " << server_ip << ":" << server_port << "\n"
+              << "       -> May tram cua ban (Client IP) : " << local_ip << ":" << local_port << "\n"
+              << "=========================================================" << std::endl;
 
     while (true) {
         std::cout << "\n  - MENU DIEU KHIEN -\n";
